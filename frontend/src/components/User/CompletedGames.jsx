@@ -74,19 +74,25 @@ function CompletedGames() {
   };
   return (
     <div className="completed-main">
+      <div className="completed-header-container">
+        <p>Take a look back...</p>
+        <img src="../../src/assets/file.png" className="bonfire-img" />
+        <p>You've completed 12 games</p>
+      </div>
       <div className="carousel-container">
         <Slider {...settings}>
           {trackedGames.map((game) => (
             <div key={game.id} className="game-slide">
               <div className="game-img-container">
-                <img src={game.img} alt={game.title} className="game-img" />
+                <img
+                  src={game.img}
+                  alt={game.title}
+                  className="completed-game-img"
+                />
               </div>
-              {/* <div className="game-details">
-                <h3>{game.title}</h3>
-                <p>
-                  {game.achievementsComp} / {game.achievementsTot} achievements
-                </p>
-              </div> */}
+              <div className="game-details">
+                <h3 style={{ marginRight: "15%" }}>{game.title}</h3>
+              </div>
             </div>
           ))}
         </Slider>
