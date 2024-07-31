@@ -82,17 +82,17 @@
 }
 
 .completed-header-container {
-    /* background-color: red; */
-    text-align: center;
+  /* background-color: red; */
+  text-align: center;
 }
 
 .completed-header-container p {
-    font-size: 200%;
+  font-size: 200%;
 }
 
 .bonfire-img {
-    width: 10%;
-    height: auto;
+  width: 10%;
+  height: auto;
 }
 
 .carousel-container {
@@ -124,4 +124,29 @@
   object-fit: cover;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.stats-upper-level {
+  background-color: blue;
+  height: 50vh;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.completion-chart-container {
+  width: 35%;
+  height: 100%;
+  background-color: red;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stats-header {
+  font-size: 150%;
+  font-weight: 600;
+}
+
+.completion-pie {
+  margin-top: -15%;
 }
