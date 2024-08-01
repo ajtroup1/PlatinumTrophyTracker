@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/ajtroup1/speakeasy/service/user"
+	"github.com/ajtroup1/platinum-trophy-tracker/service/user"
 	"github.com/gorilla/mux"
 )
 
