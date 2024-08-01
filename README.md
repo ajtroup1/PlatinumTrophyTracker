@@ -67,7 +67,7 @@
     - Method: `PUT`
     - Expects a payload:
         ```go   
-        type EditUser struct {
+        type EditUserPayload struct {
             Username       string                `json:"username"`
             Firstname      string                `json:"firstname"`
             Lastname       string                `json:"lastname"`

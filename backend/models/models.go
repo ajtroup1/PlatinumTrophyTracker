@@ -22,6 +22,7 @@ type User struct {
 type UserStore interface {
 	GetAllUsers() ([]*User, error)
 	GetUserByID(id int) (*User, error)
+	GetUserByUsername(username string) (*User, error)
 	CreateUser(User) error
 	EditUser(User) error
 	ChangePassword(id uint, currentPassword, newPassword, confirmNewPassword string) error
@@ -45,11 +46,12 @@ type RegisterUserPayload struct {
 }
 
 type LoginUserPayload struct {
-	Email    string `json:"email" validate:"required,email"`
+	Username    string `json:"username" validate:"required"`
 	Password string `json:"password" validate:"required"`
 }
 
-type EditUser struct {
+type EditUserPayload struct {
+	ID             uint32                `json:"id"`
 	Username  string                `json:"username"`
 	Firstname string                `json:"firstname"`
 	Lastname  string                `json:"lastname"`

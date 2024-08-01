@@ -73,7 +73,7 @@ func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	u, err := h.store.GetUserByEmail(user.Email)
+	u, err := h.store.GetUserByUsername(user.Username)
 	if err != nil {
 		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("not found, invalid email or password"))
 		return
@@ -112,9 +112,9 @@ func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Check if user exists
-	_, err := h.store.GetUserByEmail(payload.Email)
+	_, err := h.store.GetUserByUsername(payload.Username)
 	if err == nil {
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("user with email %s already exists", payload.Email))
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("user with username %s already exists", payload.Username))
 		return
 	}
 
@@ -131,12 +131,8 @@ func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
 		Firstname:          payload.Firstname,
 		Lastname:           payload.Lastname,
 		Email:              payload.Email,
-		PhoneNumber:        payload.PhoneNumber,
-		ImgLink:            payload.ImgLink,
-		Status:             1,
+		ImgURL:            payload.ImgLink,
 		CreatedAt:          time.Now(),
-		TextNotifications:  payload.TextNotifications,
-		EmailNotifications: payload.EmailNotifications,
 	}
 
 	// Create user in the database
@@ -144,14 +140,6 @@ func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)
 		return
-	}
-
-	if u.EmailNotifications {
-		htmlBody := email.GetRegisterHtmlBody(u.Firstname, u.Username)
-		err = email.SendEmail(u.Email, "Welcome to Speakeasy!", htmlBody)
-		if err != nil {
-			log.Fatal(err)
-		}
 	}
 
 	utils.WriteJSON(w, http.StatusCreated, u)
@@ -171,7 +159,7 @@ func (h *Handler) handleEdit(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Check if user exists
-	existingUser, err := h.store.GetUserByID(payload.ID)
+	existingUser, err := h.store.GetUserByID(int(payload.ID))
 	if err != nil {
 		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("user with id %d doesn't exist", payload.ID))
 		return
@@ -182,8 +170,7 @@ func (h *Handler) handleEdit(w http.ResponseWriter, r *http.Request) {
 		existingUser.Firstname == payload.Firstname &&
 		existingUser.Lastname == payload.Lastname &&
 		existingUser.Email == payload.Email &&
-		existingUser.PhoneNumber == payload.PhoneNumber &&
-		existingUser.ImgLink == payload.ImgLink {
+		existingUser.ImgURL == payload.ImgURL {
 		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("received information is identical to information in database"))
 		return
 	}
@@ -193,8 +180,7 @@ func (h *Handler) handleEdit(w http.ResponseWriter, r *http.Request) {
 	existingUser.Firstname = payload.Firstname
 	existingUser.Lastname = payload.Lastname
 	existingUser.Email = payload.Email
-	existingUser.PhoneNumber = payload.PhoneNumber
-	existingUser.ImgLink = payload.ImgLink
+	existingUser.ImgURL = payload.ImgURL
 
 	err = h.store.EditUser(*existingUser)
 	if err != nil {

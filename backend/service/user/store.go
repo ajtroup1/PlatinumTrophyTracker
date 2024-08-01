@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/ajtroup1/platinum-trophy-tracker/models"
-	"github.com/ajtroup1/speakeasy/service/auth"
+	"github.com/ajtroup1/platinum-trophy-tracker/service/auth"
 )
 
 type Store struct {
@@ -20,7 +20,7 @@ func NewStore(db *sql.DB) *Store {
 }
 
 func (s *Store) GetAllUsers() ([]*models.User, error) {
-	rows, err := s.db.Query("SELECT id, username, password, firstname, lastname, email, phoneNumber, imgLink, status, createdAt, textNotifications, emailNotifications FROM users")
+	rows, err := s.db.Query("SELECT id, username, password, firstname, lastname, email, imgurl, createdAt FROM users")
 	if err != nil {
 		return nil, err
 	}
@@ -29,7 +29,7 @@ func (s *Store) GetAllUsers() ([]*models.User, error) {
 	var users []*models.User
 	for rows.Next() {
 		var u models.User
-		if err := rows.Scan(&u.ID, &u.Username, &u.Password, &u.Firstname, &u.Lastname, &u.Email, &u.PhoneNumber, &u.ImgLink, &u.Status, &u.CreatedAt, &u.TextNotifications, &u.EmailNotifications); err != nil {
+		if err := rows.Scan(&u.ID, &u.Username, &u.Password, &u.Firstname, &u.Lastname, &u.Email, &u.ImgURL, &u.CreatedAt); err != nil {
 			return nil, err
 		}
 		users = append(users, &u)
@@ -42,8 +42,8 @@ func (s *Store) GetAllUsers() ([]*models.User, error) {
 	return users, nil
 }
 
-func (s *Store) GetUserByEmail(email string) (*models.User, error) {
-	rows, err := s.db.Query("SELECT * FROM users WHERE email = ?", email)
+func (s *Store) GetUserByUsername(username string) (*models.User, error) {
+	rows, err := s.db.Query("SELECT * FROM users WHERE username = ?", username)
 	if err != nil {
 		return nil, err
 	}
@@ -88,8 +88,8 @@ func (s *Store) CreateUser(user models.User) error {
 	firstname := capitalizeFirstLetter(user.Firstname)
 	lastname := capitalizeFirstLetter(user.Lastname)
 
-	_, err := s.db.Exec("INSERT INTO users (username, password, firstname, lastname, email, phoneNumber, imglink, status, createdAt, textNotifications, emailNotifications) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-		user.Username, user.Password, firstname, lastname, user.Email, user.PhoneNumber, user.ImgLink, user.Status, user.CreatedAt, user.TextNotifications, user.EmailNotifications)
+	_, err := s.db.Exec("INSERT INTO users (username, password, firstname, lastname, email, imgurl, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?)",
+		user.Username, user.Password, firstname, lastname, user.Email, user.ImgURL, user.CreatedAt)
 	if err != nil {
 		return err
 	}
@@ -101,8 +101,8 @@ func (s *Store) EditUser(user models.User) error {
 	firstname := capitalizeFirstLetter(user.Firstname)
 	lastname := capitalizeFirstLetter(user.Lastname)
 
-	_, err := s.db.Exec("UPDATE users SET username = ?, firstname = ?, lastname = ?, email = ?, phoneNumber = ?, imgLink = ? WHERE id = ?",
-		user.Username, firstname, lastname, user.Email, user.PhoneNumber, user.ImgLink, user.ID)
+	_, err := s.db.Exec("UPDATE users SET username = ?, firstname = ?, lastname = ?, email = ?, imgLink = ? WHERE id = ?",
+		user.Username, firstname, lastname, user.Email, user.ImgURL, user.ID)
 	if err != nil {
 		return fmt.Errorf("failed to update user: %w", err)
 	}
@@ -161,7 +161,7 @@ func capitalizeFirstLetter(s string) string {
 func scanRowsIntoUser(rows *sql.Rows) (*models.User, error) {
 	user := new(models.User)
 
-	err := rows.Scan(&user.ID, &user.Username, &user.Password, &user.Firstname, &user.Lastname, &user.Email, &user.PhoneNumber, &user.ImgLink, &user.Status, &user.CreatedAt, &user.TextNotifications, &user.EmailNotifications)
+	err := rows.Scan(&user.ID, &user.Username, &user.Password, &user.Firstname, &user.Lastname, &user.Email, &user.ImgURL, &user.CreatedAt)
 	if err != nil {
 		return nil, err
 	}
