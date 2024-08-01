@@ -137,7 +137,7 @@
   - Returns a 200 and Game upon sucessful execution
 
 - Add a game to the db
-  -Endpoint: `/add-game`
+  - Endpoint: `/add-game`
   - Method: `POST`
   - Expects a payload:
     ```go
