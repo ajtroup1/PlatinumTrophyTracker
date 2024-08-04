@@ -21,8 +21,8 @@ type User struct {
 
 type UserStore interface {
 	GetAllUsers() ([]*User, error)
-	GetUserByID(id int) (*User, error)
 	GetUserByUsername(username string) (*User, error)
+	GetUserByID(id int) (*User, error)
 	CreateUser(User) error
 	EditUser(User) error
 	ChangePassword(id uint, currentPassword, newPassword, confirmNewPassword string) error
@@ -30,34 +30,42 @@ type UserStore interface {
 
 type UserPlatformAccount struct {
 	ID         uint   `json:"id"`
-	UserID     uint   `json:"userID"`
+	UserID 	   uint	  `json:"userID"`
 	Username   string `json:"username"`
 	PlatformID uint32 `json:"platformID"`
 }
 
+type UserPlatformAccountStore interface {
+    GetAccountsByUserID(id uint) ([]*UserPlatformAccount, error)
+    UpdateUserAccounts(userID uint, accounts []*UserPlatformAccount) error
+}
+
+type UpdateAccountsPayload struct {
+	UserID   uint                   `json:"userID" validate:"required"`
+	Accounts []*UserPlatformAccount `json:"accounts" validate:"required"`
+}
+
 type RegisterUserPayload struct {
-	Username  string                `json:"username" validate:"required,min=4,max=25"`
-	Password  string                `json:"password" validate:"required,password"`
-	Firstname string                `json:"firstname" validate:"required,min=2,max=255"`
-	Lastname  string                `json:"lastname" validate:"required,min=2,max=255"`
-	Email     string                `json:"email" validate:"required,email"`
-	ImgLink   string                `json:"imglink"`
-	Accounts  []UserPlatformAccount `json:"accounts"`
+	Username  string `json:"username" validate:"required,min=4,max=25"`
+	Password  string `json:"password" validate:"required,password"`
+	Firstname string `json:"firstname" validate:"required,min=2,max=255"`
+	Lastname  string `json:"lastname" validate:"required,min=2,max=255"`
+	Email     string `json:"email" validate:"required,email"`
+	ImgLink   string `json:"imglink"`
 }
 
 type LoginUserPayload struct {
-	Username    string `json:"username" validate:"required"`
+	Username string `json:"username" validate:"required"`
 	Password string `json:"password" validate:"required"`
 }
 
 type EditUserPayload struct {
-	ID             uint32                `json:"id"`
-	Username  string                `json:"username"`
-	Firstname string                `json:"firstname"`
-	Lastname  string                `json:"lastname"`
-	Email     string                `json:"email"`
-	ImgURL    string                `json:"imgurl"`
-	Accounts  []UserPlatformAccount `json:"Accounts"`
+	ID        uint32 `json:"id"`
+	Username  string `json:"username"`
+	Firstname string `json:"firstname"`
+	Lastname  string `json:"lastname"`
+	Email     string `json:"email"`
+	ImgURL    string `json:"imgurl"`
 }
 
 type ChangePasswordPayload struct {

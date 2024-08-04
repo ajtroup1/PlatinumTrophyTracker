@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"time"
 
-	// "github.com/ajtroup1/speakeasy/config"
 	"github.com/ajtroup1/platinum-trophy-tracker/models"
 	"github.com/ajtroup1/platinum-trophy-tracker/service/auth"
 	"github.com/ajtroup1/platinum-trophy-tracker/utils"
@@ -29,8 +28,8 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/users/{id:[0-9]+}", h.handleGetUserByID).Methods("GET")
 	router.HandleFunc("/login", h.handleLogin).Methods("POST")
 	router.HandleFunc("/register", h.handleRegister).Methods("POST")
-	router.HandleFunc("/edit", h.handleEdit).Methods("PUT")
-	router.HandleFunc("/changepassword", h.handleChangePassword).Methods("PUT")
+	router.HandleFunc("/edit-user", h.handleEdit).Methods("PUT")
+	router.HandleFunc("/change-password", h.handleChangePassword).Methods("PUT")
 }
 
 func (h *Handler) handleGetUsers(w http.ResponseWriter, r *http.Request) {
@@ -126,13 +125,13 @@ func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
 	}
 
 	u := models.User{
-		Username:           payload.Username,
-		Password:           hashedPassword,
-		Firstname:          payload.Firstname,
-		Lastname:           payload.Lastname,
-		Email:              payload.Email,
-		ImgURL:            payload.ImgLink,
-		CreatedAt:          time.Now(),
+		Username:  payload.Username,
+		Password:  hashedPassword,
+		Firstname: payload.Firstname,
+		Lastname:  payload.Lastname,
+		Email:     payload.Email,
+		ImgURL:    payload.ImgLink,
+		CreatedAt: time.Now(),
 	}
 
 	// Create user in the database

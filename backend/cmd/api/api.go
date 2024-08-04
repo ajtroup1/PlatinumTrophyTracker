@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/ajtroup1/platinum-trophy-tracker/service/account"
 	"github.com/ajtroup1/platinum-trophy-tracker/service/user"
 	"github.com/gorilla/mux"
 )
@@ -31,6 +32,11 @@ func (s *APIServer) Run() error {
 	userStore := user.NewStore(s.db)
 	userHandler := user.NewHandler(userStore)
 	userHandler.RegisterRoutes(subrouter)
+
+	accountStore := account.NewStore(s.db)
+	accountHandler := account.NewHandler(accountStore)
+	accountHandler.RegisterRoutes(subrouter)
+
 
 	s.Router = router
 

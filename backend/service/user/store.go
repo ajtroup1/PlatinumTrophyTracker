@@ -20,7 +20,7 @@ func NewStore(db *sql.DB) *Store {
 }
 
 func (s *Store) GetAllUsers() ([]*models.User, error) {
-	rows, err := s.db.Query("SELECT id, username, password, firstname, lastname, email, imgurl, createdAt FROM users")
+	rows, err := s.db.Query("SELECT id, username, password, firstname, lastname, email, imgurl, created_at FROM users")
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +88,7 @@ func (s *Store) CreateUser(user models.User) error {
 	firstname := capitalizeFirstLetter(user.Firstname)
 	lastname := capitalizeFirstLetter(user.Lastname)
 
-	_, err := s.db.Exec("INSERT INTO users (username, password, firstname, lastname, email, imgurl, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?)",
+	_, err := s.db.Exec("INSERT INTO users (username, password, firstname, lastname, email, imgurl, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
 		user.Username, user.Password, firstname, lastname, user.Email, user.ImgURL, user.CreatedAt)
 	if err != nil {
 		return err

@@ -1,0 +1,6 @@
+CREATE TABLE accounts (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    username VARCHAR(255) NOT NULL,
+    platform_id INTEGER NOT NULL REFERENCES platforms(id) ON DELETE CASCADE
+);
