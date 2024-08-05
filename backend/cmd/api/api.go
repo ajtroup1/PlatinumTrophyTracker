@@ -44,21 +44,21 @@ func (s *APIServer) Run() error {
 	subrouter := router.PathPrefix("/api/v1").Subrouter()
 
 	userStore := user.NewStore(s.db)
+	gameStore := game.NewStore(s.db)
+	userGameStore := usergame.NewStore(s.db)
+	accountStore := account.NewStore(s.db)
+	achStore := achievement.NewStore(s.db)
+	
 	userHandler := user.NewHandler(userStore)
 	userHandler.RegisterRoutes(subrouter)
 
-	accountStore := account.NewStore(s.db)
 	accountHandler := account.NewHandler(accountStore)
 	accountHandler.RegisterRoutes(subrouter)
 
-	userGameStore := usergame.NewStore(s.db)
-
-	gameStore := game.NewStore(s.db)
 	gameHandler := game.NewHandler(gameStore, userGameStore)
 	gameHandler.RegisterRoutes(subrouter)
 
-	achStore := achievement.NewStore(s.db)
-	userGameHandler := usergame.NewHandler(userGameStore, achStore)
+	userGameHandler := usergame.NewHandler(userGameStore, achStore, gameStore)
 	userGameHandler.RegisterRoutes(subrouter)
 
 	s.Router = router

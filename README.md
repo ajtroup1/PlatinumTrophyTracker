@@ -242,6 +242,6 @@
     ```go
     type CompletedUserAchievementPayload struct {
         UserID        uint32    `json:"userID"`
-        UserAchievementID uint32    `json:"achievementID"`
+        AchievementID uint32    `json:"achievementID"`
     }
     ```

@@ -65,6 +65,20 @@ func (s *Store) TrackGame(userID, gameID uint32) error {
 	return nil
 }
 
+func (s *Store) UntrackGame(userID, gameID uint32) error {
+	_, err := s.db.Exec("DELETE FROM user_games WHERE user_id = ? AND game_id = ?", userID, gameID)
+	if err != nil {
+		return fmt.Errorf("failed to delete from user_games: %v", err)
+	}
+
+	_, err = s.db.Exec("DELETE FROM user_achievements WHERE user_id = ? AND game_id = ?", userID, gameID)
+	if err != nil {
+		return fmt.Errorf("failed to delete from user_achievements: %v", err)
+	}
+
+	return nil
+}
+
 func scanUserGame(scanner interface {
 	Scan(dest ...interface{}) error
 }, game *models.UserGame) error {

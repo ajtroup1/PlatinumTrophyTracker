@@ -215,6 +215,7 @@ type UserGameStore interface {
 	GetAllUserGames(userID uint32) ([]*UserGame, error)
 	GetUserGameByID(userID, gameID uint32) (*UserGame, error)
 	TrackGame(userID, gameID uint32) error
+	UntrackGame(userID, gameID uint32) error
 }
 
 type TrackGamePayload struct {
@@ -234,6 +235,7 @@ type Achievement struct {
 
 type AchievementStore interface {
 	CompleteAchievement(userID, achievementID uint32) error
+	GetAllAchievementsByGame(gameID uint32) ([]*Achievement, error)
 }
 
 type AddAchievementPayload struct {
