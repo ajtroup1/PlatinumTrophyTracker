@@ -17,10 +17,11 @@ import (
 
 type Handler struct {
 	store models.GameStore
+	userStore models.UserGameStore
 }
 
-func NewHandler(store models.GameStore) *Handler {
-	return &Handler{store: store}
+func NewHandler(store models.GameStore, userStore models.UserGameStore) *Handler {
+	return &Handler{store: store, userStore: userStore}
 }
 
 func (h *Handler) RegisterRoutes(router *mux.Router) {
@@ -83,7 +84,7 @@ func (h *Handler) handleSearchForGame(w http.ResponseWriter, r *http.Request) {
 	query := reqURL.Query()
 	query.Set("key", rawgKey)
 	query.Set("search", val)
-	query.Set("page_size", "50")      
+	query.Set("page_size", "50")
 	reqURL.RawQuery = query.Encode()
 
 	// Make the API request
@@ -133,6 +134,22 @@ func (h *Handler) handleAddGameToDB(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	idStr := vars["id"]
 
+	// Extract the "user" query parameter
+	queryParams := r.URL.Query()
+	userIDStr := queryParams.Get("user")
+
+	// Check if the query parameter is present
+	if userIDStr == "" {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("missing query parameter 'user'"))
+		return
+	}
+
+	userID, err := strconv.ParseUint(userIDStr, 10, 32)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("error parsing user ID: %v", err))
+		return
+	}
+
 	// Prepare the API request URL
 	rawgKey := config.Envs.RAWGKey
 	apiURL := "https://api.rawg.io/api/games/" + idStr
@@ -167,8 +184,6 @@ func (h *Handler) handleAddGameToDB(w http.ResponseWriter, r *http.Request) {
 		utils.WriteError(w, resp.StatusCode, fmt.Errorf("unexpected response status: %v", resp.Status))
 		return
 	}
-
-	fmt.Println("Response Body:", string(body))
 
 	var game models.GameResponse
 	err = json.Unmarshal(body, &game)
@@ -219,6 +234,13 @@ func (h *Handler) handleAddGameToDB(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	// Track game for user
+	err = h.userStore.TrackGame(uint32(userID), add_game.ID)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("error tracking game: %v", err))
+		return
+	}
+
 	// Read achievements into the database with pagination
 	apiURL = "https://api.rawg.io/api/games/" + idStr + "/achievements"
 	reqURL, err = url.Parse(apiURL)
@@ -255,8 +277,6 @@ func (h *Handler) handleAddGameToDB(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		fmt.Println("Response Body:", string(body))
-
 		// Decode the JSON from the body
 		var data struct {
 			Results []models.Achievement `json:"results"`
@@ -269,7 +289,17 @@ func (h *Handler) handleAddGameToDB(w http.ResponseWriter, r *http.Request) {
 
 		// Insert achievements into the database
 		for _, achievement := range data.Results {
-			err = h.store.AddAchievement(achievement)
+			achievement.GameID = uint(add_game.ID)
+			achID, err := h.store.AddAchievement(achievement)
+			if err != nil {
+				utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("error adding achievement: %v", err))
+				return
+			}
+			if achID == -1 {
+				utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("error adding achievement"))
+				return
+			}
+			err = h.store.AddUserAchievement(uint32(userID), add_game.ID, uint32(achID))
 			if err != nil {
 				utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("error adding achievement: %v", err))
 				return

@@ -18,3 +18,7 @@ migrate-up:
 
 migrate-down:
 	@go run cmd/migrate/main.go down
+
+reset:
+	@make migrate-down
+	@make migrate-up

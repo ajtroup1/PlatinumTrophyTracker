@@ -10,8 +10,10 @@ import (
 	"strings"
 
 	"github.com/ajtroup1/platinum-trophy-tracker/service/account"
+	"github.com/ajtroup1/platinum-trophy-tracker/service/achievement"
 	"github.com/ajtroup1/platinum-trophy-tracker/service/game"
 	"github.com/ajtroup1/platinum-trophy-tracker/service/user"
+	usergame "github.com/ajtroup1/platinum-trophy-tracker/service/user_game"
 	"github.com/gorilla/mux"
 )
 
@@ -29,11 +31,11 @@ func NewAPIServer(addr string, db *sql.DB) *APIServer {
 }
 
 func clearConsole() {
-    cmd := exec.Command("cmd", "/c", "cls")
-    cmd.Stdout = os.Stdout
-    if err := cmd.Run(); err != nil {
-        log.Fatalf("failed to clear console: %v", err)
-    }
+	cmd := exec.Command("cmd", "/c", "cls")
+	cmd.Stdout = os.Stdout
+	if err := cmd.Run(); err != nil {
+		log.Fatalf("failed to clear console: %v", err)
+	}
 }
 
 func (s *APIServer) Run() error {
@@ -49,9 +51,15 @@ func (s *APIServer) Run() error {
 	accountHandler := account.NewHandler(accountStore)
 	accountHandler.RegisterRoutes(subrouter)
 
+	userGameStore := usergame.NewStore(s.db)
+
 	gameStore := game.NewStore(s.db)
-	gameHandler := game.NewHandler(gameStore)
+	gameHandler := game.NewHandler(gameStore, userGameStore)
 	gameHandler.RegisterRoutes(subrouter)
+
+	achStore := achievement.NewStore(s.db)
+	userGameHandler := usergame.NewHandler(userGameStore, achStore)
+	userGameHandler.RegisterRoutes(subrouter)
 
 	s.Router = router
 

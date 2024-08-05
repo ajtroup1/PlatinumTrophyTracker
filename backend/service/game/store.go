@@ -73,7 +73,6 @@ func (s *Store) AddGame(game models.Game) (models.Game, error) {
 	return insertedGame, nil
 }
 
-
 func (s *Store) AddGamePlatform(name string, gameID uint32) error {
 	var platformID uint
 
@@ -107,16 +106,30 @@ func (s *Store) AddGameGenre(name string, gameID uint32) error {
 	return nil
 }
 
-func (s *Store) AddAchievement(achievement models.Achievement) error {
-	_, err := s.db.Exec("INSERT INTO achievements (name, description, imgurl, percent, game_id) VALUES (?, ?, ?, ?, ?)",
+func (s *Store) AddAchievement(achievement models.Achievement) (int32, error) {
+	result, err := s.db.Exec("INSERT INTO achievements (name, description, imgurl, percent, game_id) VALUES (?, ?, ?, ?, ?)",
 		achievement.Name, achievement.Description, achievement.ImgURL, achievement.Percent, achievement.GameID)
+	if err != nil {
+		return -1, err
+	}
+
+	lastID, err := result.LastInsertId()
+	if err != nil {
+		return -1, err
+	}
+
+	return int32(lastID), nil
+}
+
+func (s *Store) AddUserAchievement(userID, gameID, achID uint32) error {
+	_, err := s.db.Exec("INSERT INTO user_achievements (user_id, game_id, achievement_id) VALUES (?, ?, ?)",
+		userID, gameID, achID)
 	if err != nil {
 		return err
 	}
 
 	return nil
 }
-
 
 func scanGame(scanner interface {
 	Scan(dest ...interface{}) error
