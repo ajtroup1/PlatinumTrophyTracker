@@ -8,14 +8,13 @@ import (
 )
 
 type Config struct {
-	PublicHost    string
-	Port          string
-	DBUser        string
-	DBPassword    string
-	DBAddress     string
-	DBName        string
-	Email         string
-	EmailPassword string
+	PublicHost string
+	Port       string
+	DBUser     string
+	DBPassword string
+	DBAddress  string
+	DBName     string
+	RAWGKey    string
 }
 
 var Envs = initConfig()
@@ -23,14 +22,13 @@ var Envs = initConfig()
 func initConfig() Config {
 	godotenv.Load()
 	return Config{
-		PublicHost:    getEnv("PUBLIC_HOST", "http://localhost"),
-		Port:          getEnv("PORT", "8080"),
-		DBUser:        getEnv("DB_USER", "root"),
-		DBPassword:    getEnv("DB_PASSWORD", "password"),
-		DBAddress:     fmt.Sprintf("%s:%s", getEnv("DB_HOST", "127.0.0.1"), getEnv("DB_PORT", "3306")),
-		DBName:        getEnv("DB_NAME", "mydatabase"),
-		Email:         getEnv("EMAIL", "name@mail.com"),
-		EmailPassword: getEnv("EMAIL_PASSWORD", "password"),
+		PublicHost: getEnv("PUBLIC_HOST", "http://localhost"),
+		Port:       getEnv("PORT", "8080"),
+		DBUser:     getEnv("DB_USER", "root"),
+		DBPassword: getEnv("DB_PASSWORD", "password"),
+		DBAddress:  fmt.Sprintf("%s:%s", getEnv("DB_HOST", "127.0.0.1"), getEnv("DB_PORT", "3306")),
+		DBName:     getEnv("DB_NAME", "mydatabase"),
+		RAWGKey:    getEnv("RAWG_KEY", "key"),
 	}
 }
 

@@ -77,12 +77,12 @@ func TestUser(t *testing.T) {
 
 	t.Run("should edit a user", func(t *testing.T) {
 		payload := models.EditUserPayload{
-			ID:          1,
-			Username:    "adamjtroup2",
-			Firstname:   "Adam",
-			Lastname:    "Troup",
-			Email:       "adamjtroup@gmail.com",
-			ImgURL:     "https://upload.wikimedia.org/wikipedia/en/thumb/2/29/DS2_by_Future.jpg/220px-DS2_by_Future.jpg",
+			ID:        1,
+			Username:  "adamjtroup2",
+			Firstname: "Adam",
+			Lastname:  "Troup",
+			Email:     "adamjtroup@gmail.com",
+			ImgURL:    "https://upload.wikimedia.org/wikipedia/en/thumb/2/29/DS2_by_Future.jpg/220px-DS2_by_Future.jpg",
 		}
 		marshal, _ := json.Marshal(payload)
 
@@ -105,9 +105,9 @@ func TestUser(t *testing.T) {
 
 	t.Run("should change a user's password", func(t *testing.T) {
 		payload := models.ChangePasswordPayload{
-			UserID: 1,
-			CurrentPassword: "Sample123!",
-			NewPassword: "Sample1234!",
+			UserID:             1,
+			CurrentPassword:    "Sample123!",
+			NewPassword:        "Sample1234!",
 			ConfirmNewPassword: "Sample1234!",
 		}
 		marshal, _ := json.Marshal(payload)
@@ -143,13 +143,13 @@ func (s *mockUserStore) GetUserByUsername(username string) (*models.User, error)
 func (s *mockUserStore) GetUserByID(id int) (*models.User, error) {
 	if id == 1 {
 		return &models.User{
-			ID:          1,
-			Username:    "adamjtroup",
-			Password:    "$2a$10$luQ7PyQR0KQeliaN15Y55uMFFPzdwDW8VhjEPvIWfJUizTN4IGps2",
-			Firstname:   "Adam",
-			Lastname:    "Troup",
-			Email:       "adamjtroup@gmail.com",
-			ImgURL:     "https://upload.wikimedia.org/wikipedia/en/thumb/2/29/DS2_by_Future.jpg/220px-DS2_by_Future.jpg",
+			ID:        1,
+			Username:  "adamjtroup",
+			Password:  "$2a$10$luQ7PyQR0KQeliaN15Y55uMFFPzdwDW8VhjEPvIWfJUizTN4IGps2",
+			Firstname: "Adam",
+			Lastname:  "Troup",
+			Email:     "adamjtroup@gmail.com",
+			ImgURL:    "https://upload.wikimedia.org/wikipedia/en/thumb/2/29/DS2_by_Future.jpg/220px-DS2_by_Future.jpg",
 			CreatedAt: time.Date(
 				2024,      // year
 				time.July, // month
@@ -163,13 +163,13 @@ func (s *mockUserStore) GetUserByID(id int) (*models.User, error) {
 		}, nil
 	} else if id == 2 {
 		return &models.User{
-			ID:          2,
-			Username:    "friend",
-			Password:    "$2a$10$luQ7PyQR0KQeliaN15Y55uMFFPzdwDW8VhjEPvIWfJUizTN4IGps2",
-			Firstname:   "Sample",
-			Lastname:    "Name",
-			Email:       "sample@mail.com",
-			ImgURL:     "",
+			ID:        2,
+			Username:  "friend",
+			Password:  "$2a$10$luQ7PyQR0KQeliaN15Y55uMFFPzdwDW8VhjEPvIWfJUizTN4IGps2",
+			Firstname: "Sample",
+			Lastname:  "Name",
+			Email:     "sample@mail.com",
+			ImgURL:    "",
 			CreatedAt: time.Date(
 				2024,      // year
 				time.July, // month
@@ -183,13 +183,13 @@ func (s *mockUserStore) GetUserByID(id int) (*models.User, error) {
 		}, nil
 	} else if id == 3 {
 		return &models.User{
-			ID:          3,
-			Username:    "enemy",
-			Password:    "$2a$10$luQ7PyQR0KQeliaN15Y55uMFFPzdwDW8VhjEPvIWfJUizTN4IGps2",
-			Firstname:   "Sample",
-			Lastname:    "Name",
-			Email:       "sample2@mail.com",
-			ImgURL:     "",
+			ID:        3,
+			Username:  "enemy",
+			Password:  "$2a$10$luQ7PyQR0KQeliaN15Y55uMFFPzdwDW8VhjEPvIWfJUizTN4IGps2",
+			Firstname: "Sample",
+			Lastname:  "Name",
+			Email:     "sample2@mail.com",
+			ImgURL:    "",
 			CreatedAt: time.Date(
 				2024,      // year
 				time.July, // month

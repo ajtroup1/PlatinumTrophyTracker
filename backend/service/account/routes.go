@@ -22,7 +22,7 @@ func NewHandler(store models.UserPlatformAccountStore) *Handler {
 
 func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/accounts/{id:[0-9]+}", h.handleGetUserByID).Methods("GET")
-	router.HandleFunc("/update-user-accounts", h.handleUpdateAccounts).Methods("PUT")	
+	router.HandleFunc("/update-user-accounts", h.handleUpdateAccounts).Methods("PUT")
 }
 
 func (h *Handler) handleGetUserByID(w http.ResponseWriter, r *http.Request) {

@@ -40,43 +40,43 @@ func TestAccounts(t *testing.T) {
 	})
 
 	t.Run("should succeed with valid payload", func(t *testing.T) {
-        // Test case with valid payload
-        payload := models.UpdateAccountsPayload{
-            UserID: 1,
-            Accounts: []*models.UserPlatformAccount{
-                {
-                    ID:         1,
-                    Username:   "testuser1",
-                    PlatformID: 1,
-                },
-                {
-                    ID:         2,
-                    Username:   "testuser2",
-                    PlatformID: 2,
-                },
-            },
-        }
-        marshal, _ := json.Marshal(payload)
+		// Test case with valid payload
+		payload := models.UpdateAccountsPayload{
+			UserID: 1,
+			Accounts: []*models.UserPlatformAccount{
+				{
+					ID:         1,
+					Username:   "testuser1",
+					PlatformID: 1,
+				},
+				{
+					ID:         2,
+					Username:   "testuser2",
+					PlatformID: 2,
+				},
+			},
+		}
+		marshal, _ := json.Marshal(payload)
 
-        req, err := http.NewRequest(http.MethodPut, "/update-user-accounts", bytes.NewBuffer(marshal))
-        if err != nil {
-            t.Fatal(err)
-        }
+		req, err := http.NewRequest(http.MethodPut, "/update-user-accounts", bytes.NewBuffer(marshal))
+		if err != nil {
+			t.Fatal(err)
+		}
 
-        rr := httptest.NewRecorder()
-        router := mux.NewRouter()
+		rr := httptest.NewRecorder()
+		router := mux.NewRouter()
 
-        router.HandleFunc("/update-user-accounts", handler.handleUpdateAccounts)
+		router.HandleFunc("/update-user-accounts", handler.handleUpdateAccounts)
 
-        router.ServeHTTP(rr, req)
+		router.ServeHTTP(rr, req)
 
-        if rr.Code != http.StatusOK {
-            t.Errorf("expected status code %d, got %d. Response body: %s", http.StatusOK, rr.Code, rr.Body.String())
-        }
-    })
+		if rr.Code != http.StatusOK {
+			t.Errorf("expected status code %d, got %d. Response body: %s", http.StatusOK, rr.Code, rr.Body.String())
+		}
+	})
 }
 
-type mockAccountStore struct {}
+type mockAccountStore struct{}
 
 func (s *mockAccountStore) GetAccountsByUserID(id uint) ([]*models.UserPlatformAccount, error) {
 	return nil, nil

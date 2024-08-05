@@ -5,9 +5,12 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"os"
+	"os/exec"
 	"strings"
 
 	"github.com/ajtroup1/platinum-trophy-tracker/service/account"
+	"github.com/ajtroup1/platinum-trophy-tracker/service/game"
 	"github.com/ajtroup1/platinum-trophy-tracker/service/user"
 	"github.com/gorilla/mux"
 )
@@ -25,7 +28,16 @@ func NewAPIServer(addr string, db *sql.DB) *APIServer {
 	}
 }
 
+func clearConsole() {
+    cmd := exec.Command("cmd", "/c", "cls")
+    cmd.Stdout = os.Stdout
+    if err := cmd.Run(); err != nil {
+        log.Fatalf("failed to clear console: %v", err)
+    }
+}
+
 func (s *APIServer) Run() error {
+	clearConsole()
 	router := mux.NewRouter()
 	subrouter := router.PathPrefix("/api/v1").Subrouter()
 
@@ -37,6 +49,9 @@ func (s *APIServer) Run() error {
 	accountHandler := account.NewHandler(accountStore)
 	accountHandler.RegisterRoutes(subrouter)
 
+	gameStore := game.NewStore(s.db)
+	gameHandler := game.NewHandler(gameStore)
+	gameHandler.RegisterRoutes(subrouter)
 
 	s.Router = router
 

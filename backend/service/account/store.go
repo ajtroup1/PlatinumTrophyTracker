@@ -43,7 +43,6 @@ func (s *Store) CreateAccount(userID uint, account models.UserPlatformAccount) e
 	return nil
 }
 
-
 func (s *Store) UpdateUserAccounts(userID uint, accounts []*models.UserPlatformAccount) error {
 	tx, err := s.db.Begin()
 	if err != nil {

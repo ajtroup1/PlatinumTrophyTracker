@@ -4,10 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"net/smtp"
 	"regexp"
 
-	"github.com/ajtroup1/platinum-trophy-tracker/config"
 	"github.com/go-playground/validator/v10"
 )
 
@@ -47,29 +45,4 @@ func WriteJSON(w http.ResponseWriter, status int, v any) error {
 
 func WriteError(w http.ResponseWriter, status int, err error) {
 	WriteJSON(w, status, map[string]string{"error": err.Error()})
-}
-
-func SendEmail(to string, subject string, body string) error {
-	from := config.Envs.Email
-	password := config.Envs.EmailPassword
-
-	// SMTP server configuration
-	smtpHost := "smtp.gmail.com"
-	smtpPort := "587"
-
-	// Message
-	message := []byte("Subject: " + subject + "\r\n" +
-		"\r\n" +
-		body + "\r\n")
-
-	// Authentication
-	auth := smtp.PlainAuth("", from, password, smtpHost)
-
-	// Sending email
-	err := smtp.SendMail(smtpHost+":"+smtpPort, auth, from, []string{to}, message)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
