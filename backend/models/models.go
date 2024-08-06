@@ -12,6 +12,7 @@ type User struct {
 	Email          string                `json:"email"`
 	ImgURL         string                `json:"imgurl"`
 	CreatedAt      time.Time             `json:"createdAt"`
+	UpdatedAt      time.Time             `json:"updatedAt"`
 	Accounts       []UserPlatformAccount `json:"Accounts"`
 	TrackedGames   int                   `json:"trackedGames"`
 	CompletedGames int                   `json:"completedGames"`
@@ -22,6 +23,7 @@ type User struct {
 type UserStore interface {
 	GetAllUsers() ([]*User, error)
 	GetUserByUsername(username string) (*User, error)
+	GetUserByUsernameOrEmail(val string) (*User, error)
 	GetUserByID(id int) (*User, error)
 	CreateUser(User) error
 	EditUser(User) error

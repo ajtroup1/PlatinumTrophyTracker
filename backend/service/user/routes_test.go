@@ -140,6 +140,10 @@ func (s *mockUserStore) GetUserByUsername(username string) (*models.User, error)
 	return nil, fmt.Errorf("user not found")
 }
 
+func (s *mockUserStore) GetUserByUsernameOrEmail(username string) (*models.User, error) {
+	return nil, fmt.Errorf("user not found")
+}
+
 func (s *mockUserStore) GetUserByID(id int) (*models.User, error) {
 	if id == 1 {
 		return &models.User{

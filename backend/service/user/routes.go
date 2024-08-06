@@ -72,14 +72,14 @@ func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	u, err := h.store.GetUserByUsername(user.Username)
+	u, err := h.store.GetUserByUsernameOrEmail(user.Username)
 	if err != nil {
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("not found, invalid email or password"))
+		utils.WriteError(w, http.StatusBadRequest, err)
 		return
 	}
 
 	if !auth.ComparePasswords(u.Password, []byte(user.Password)) {
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid email or password"))
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid password"))
 		return
 	}
 

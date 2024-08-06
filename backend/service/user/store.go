@@ -63,6 +63,42 @@ func (s *Store) GetUserByUsername(username string) (*models.User, error) {
 	return u, nil
 }
 
+func (s *Store) GetUserByUsernameOrEmail(val string) (*models.User, error) {
+	rows, err := s.db.Query("SELECT * FROM users WHERE username = ? OR email = ?", val, val)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var user *models.User
+	var found bool
+
+	for rows.Next() {
+		u, err := scanRowsIntoUser(rows)
+		if err != nil {
+			return nil, err
+		}
+
+		if !found {
+			user = u
+			found = true
+		} else {
+			// Handle the case where multiple users are returned. Not going to happen but whatever
+			return nil, fmt.Errorf("multiple users found with username or email %s", val)
+		}
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	if !found {
+		return nil, fmt.Errorf("user not found")
+	}
+
+	return user, nil
+}
+
 func (s *Store) GetUserByID(id int) (*models.User, error) {
 	rows, err := s.db.Query("SELECT * FROM users WHERE id = ?", id)
 	if err != nil {
@@ -161,7 +197,7 @@ func capitalizeFirstLetter(s string) string {
 func scanRowsIntoUser(rows *sql.Rows) (*models.User, error) {
 	user := new(models.User)
 
-	err := rows.Scan(&user.ID, &user.Username, &user.Password, &user.Firstname, &user.Lastname, &user.Email, &user.ImgURL, &user.CreatedAt)
+	err := rows.Scan(&user.ID, &user.Username, &user.Password, &user.Firstname, &user.Lastname, &user.Email, &user.ImgURL, &user.CreatedAt, &user.UpdatedAt, &user.TrackedGames, &user.CompletedGames, &user.LastLogin, &user.Deactivated)
 	if err != nil {
 		return nil, err
 	}
